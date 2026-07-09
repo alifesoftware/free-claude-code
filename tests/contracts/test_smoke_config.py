@@ -48,6 +48,9 @@ def _settings(**overrides):
         "fireworks_api_key": "",
         "cloudflare_api_token": "",
         "cloudflare_account_id": "",
+        "xiaomimimo_api_key": "",
+        "xiaomimimo_base_url": "",
+        "wandb_api_key": "",
         "lm_studio_base_url": "",
         "llamacpp_base_url": "",
         "ollama_base_url": "http://localhost:11434",
@@ -276,6 +279,38 @@ def test_sambanova_provider_configuration_uses_api_key(monkeypatch) -> None:
     models = config.provider_smoke_models()
     assert models[0].provider == "sambanova"
     assert models[0].full_model == PROVIDER_SMOKE_DEFAULT_MODELS["sambanova"]
+
+
+def test_xiaomimimo_provider_configuration_uses_api_key(monkeypatch) -> None:
+    monkeypatch.delenv("FCC_SMOKE_MODEL_XIAOMIMIMO", raising=False)
+    config = _smoke_config(
+        settings=_settings(
+            model="ollama/llama3.1",
+            ollama_base_url="",
+            xiaomimimo_api_key="mimo-key",
+        )
+    )
+
+    assert config.has_provider_configuration("xiaomimimo")
+    models = config.provider_smoke_models()
+    assert models[0].provider == "xiaomimimo"
+    assert models[0].full_model == PROVIDER_SMOKE_DEFAULT_MODELS["xiaomimimo"]
+
+
+def test_wandb_inference_provider_configuration_uses_api_key(monkeypatch) -> None:
+    monkeypatch.delenv("FCC_SMOKE_MODEL_WANDB_INFERENCE", raising=False)
+    config = _smoke_config(
+        settings=_settings(
+            model="ollama/llama3.1",
+            ollama_base_url="",
+            wandb_api_key="wandb-key",
+        )
+    )
+
+    assert config.has_provider_configuration("wandb_inference")
+    models = config.provider_smoke_models()
+    assert models[0].provider == "wandb_inference"
+    assert models[0].full_model == PROVIDER_SMOKE_DEFAULT_MODELS["wandb_inference"]
 
 
 def test_provider_smoke_model_override_accepts_model_name_without_prefix(

@@ -367,10 +367,19 @@ into Anthropic usage fields for Claude-compatible clients. Cloudflare uses its
 account-scoped Workers AI OpenAI-compatible Chat Completions endpoint for
 `@cf/...` model IDs, while account ID composition, model search, and
 Cloudflare-specific reasoning deltas stay in the Cloudflare provider client.
-OpenRouter, Wafer, Kimi, MiniMax, Fireworks, and Z.ai also use the shared
-OpenAI-chat transport; their provider clients own provider-specific thinking,
-reasoning replay, model-list filtering, and `extra_body` policy. Z.ai is treated
-as the GLM Coding Plan provider and uses Z.ai's Coding Plan OpenAI base.
+OpenRouter, Wafer, Kimi, MiniMax, Fireworks, Z.ai, and W&B Inference also use
+the shared OpenAI-chat transport; their provider clients own provider-specific
+thinking, reasoning replay, model-list filtering, and `extra_body` policy.
+Z.ai is treated as the GLM Coding Plan provider and uses Z.ai's Coding Plan
+OpenAI base. W&B Inference routes to CoreWeave-hosted open-source models via
+the standard OpenAI-compatible Chat Completions endpoint at
+`api.inference.wandb.ai/v1`; `reasoning_content` fields are forwarded as
+thinking deltas when thinking is enabled.
+Xiaomi MiMo uses the native Anthropic Messages transport with Bearer auth.
+Its provider client overrides the model-list request to hit `/v1/models`
+because the MiMo platform exposes the model catalog at the standard
+(non-Anthropic-prefixed) path. MiMo's Token Plan endpoint is supported via
+a configurable `XIAOMIMIMO_BASE_URL`.
 Mistral La Plateforme keeps its native `reasoning_effort` and thinking-chunk
 request/stream mapping inside
 [providers/mistral/reasoning.py](providers/mistral/reasoning.py), including its

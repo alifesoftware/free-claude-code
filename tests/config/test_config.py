@@ -357,6 +357,29 @@ class TestSettings:
         assert settings.sambanova_api_key == "sambanova-key"
         assert settings.sambanova_proxy == "http://proxy.test:8080"
 
+    def test_xiaomimimo_settings_from_env(self, monkeypatch):
+        """Xiaomi MiMo key and base URL env vars load into settings."""
+        from config.settings import Settings
+
+        monkeypatch.setenv("XIAOMIMIMO_API_KEY", "mimo-key")
+        monkeypatch.setenv(
+            "XIAOMIMIMO_BASE_URL", "https://token-plan-cn.xiaomimimo.com/anthropic/v1"
+        )
+        settings = Settings()
+        assert settings.xiaomimimo_api_key == "mimo-key"
+        assert (
+            settings.xiaomimimo_base_url
+            == "https://token-plan-cn.xiaomimimo.com/anthropic/v1"
+        )
+
+    def test_wandb_inference_settings_from_env(self, monkeypatch):
+        """W&B Inference API key env var loads into settings."""
+        from config.settings import Settings
+
+        monkeypatch.setenv("WANDB_API_KEY", "wandb-key")
+        settings = Settings()
+        assert settings.wandb_api_key == "wandb-key"
+
     def test_legacy_hf_token_env_is_ignored(self, monkeypatch):
         """HF_TOKEN is migrated by startup config migration, not read by Settings."""
         from config.settings import Settings

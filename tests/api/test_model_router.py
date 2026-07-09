@@ -139,6 +139,39 @@ def test_model_router_routes_minimax_provider_model_directly(settings):
     assert routed.resolved.provider_model_ref == "minimax/MiniMax-M3"
 
 
+def test_model_router_routes_xiaomimimo_provider_model_directly(settings):
+    routed = ModelRouter(settings).resolve_messages_request(
+        MessagesRequest(
+            model="xiaomimimo/MiMo-72B-RL",
+            max_tokens=100,
+            messages=[Message(role="user", content="hello")],
+        )
+    )
+
+    assert routed.request.model == "MiMo-72B-RL"
+    assert routed.resolved.provider_id == "xiaomimimo"
+    assert routed.resolved.provider_model == "MiMo-72B-RL"
+    assert routed.resolved.provider_model_ref == "xiaomimimo/MiMo-72B-RL"
+
+
+def test_model_router_routes_wandb_inference_provider_model_directly(settings):
+    routed = ModelRouter(settings).resolve_messages_request(
+        MessagesRequest(
+            model="wandb_inference/deepseek-ai/DeepSeek-V3.1",
+            max_tokens=100,
+            messages=[Message(role="user", content="hello")],
+        )
+    )
+
+    assert routed.request.model == "deepseek-ai/DeepSeek-V3.1"
+    assert routed.resolved.provider_id == "wandb_inference"
+    assert routed.resolved.provider_model == "deepseek-ai/DeepSeek-V3.1"
+    assert (
+        routed.resolved.provider_model_ref
+        == "wandb_inference/deepseek-ai/DeepSeek-V3.1"
+    )
+
+
 def test_model_router_routes_gateway_encoded_provider_model_directly(settings):
     routed = ModelRouter(settings).resolve_messages_request(
         MessagesRequest(

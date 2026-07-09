@@ -25,6 +25,8 @@ from providers.opencode import OpenCodeProvider
 from providers.sambanova import SambaNovaProvider
 from providers.vercel import VercelProvider
 from providers.wafer import WaferProvider
+from providers.wandb_inference import WandbInferenceProvider
+from providers.xiaomimimo import XiaomiMiMoProvider
 from providers.zai import ZaiProvider
 from smoke.features import FEATURE_INVENTORY, README_FEATURES, feature_ids
 
@@ -106,6 +108,8 @@ def test_provider_and_platform_registries_include_advertised_builtins() -> None:
         "groq": GroqProvider,
         "sambanova": SambaNovaProvider,
         "cerebras": CerebrasProvider,
+        "xiaomimimo": XiaomiMiMoProvider,
+        "wandb_inference": WandbInferenceProvider,
     }
     for provider_class in provider_classes.values():
         assert issubclass(provider_class, BaseProvider)

@@ -36,6 +36,8 @@ from providers.opencode import OpenCodeProvider
 from providers.runtime import ProviderRuntime, build_provider_config, create_provider
 from providers.vercel import VERCEL_AI_GATEWAY_DEFAULT_BASE, VercelProvider
 from providers.wafer import WaferProvider
+from providers.wandb_inference import WandbInferenceProvider
+from providers.xiaomimimo import XiaomiMiMoProvider
 from providers.zai import ZaiProvider
 
 
@@ -89,6 +91,11 @@ def _make_settings(**overrides):
     mock.groq_proxy = ""
     mock.cerebras_api_key = ""
     mock.cerebras_proxy = ""
+    mock.xiaomimimo_api_key = ""
+    mock.xiaomimimo_base_url = ""
+    mock.xiaomimimo_proxy = ""
+    mock.wandb_api_key = ""
+    mock.wandb_inference_proxy = ""
     mock.provider_rate_limit = 40
     mock.provider_rate_window = 60
     mock.provider_max_concurrency = 5
@@ -308,6 +315,60 @@ def test_build_provider_config_github_models_uses_token_and_proxy() -> None:
     assert config.proxy == "http://proxy.test:8080"
 
 
+def test_xiaomimimo_descriptor_uses_openai_chat_transport() -> None:
+    from providers.defaults import XIAOMIMIMO_DEFAULT_BASE
+
+    descriptor = PROVIDER_CATALOG["xiaomimimo"]
+
+    assert descriptor.transport_type == "openai_chat"
+    assert descriptor.default_base_url == XIAOMIMIMO_DEFAULT_BASE
+    assert descriptor.credential_env == "XIAOMIMIMO_API_KEY"
+    assert descriptor.base_url_attr == "xiaomimimo_base_url"
+    assert descriptor.proxy_attr == "xiaomimimo_proxy"
+    assert "thinking" in descriptor.capabilities
+    assert "native_anthropic" not in descriptor.capabilities
+
+
+def test_build_provider_config_xiaomimimo_uses_api_key_and_base_url() -> None:
+    descriptor = PROVIDER_CATALOG["xiaomimimo"]
+    settings = _make_settings(
+        xiaomimimo_api_key="mimo-token",
+        xiaomimimo_base_url="https://token-plan-cn.xiaomimimo.com/v1",
+        xiaomimimo_proxy="http://proxy.test:8080",
+    )
+
+    config = build_provider_config(descriptor, settings)
+
+    assert config.api_key == "mimo-token"
+    assert config.base_url == "https://token-plan-cn.xiaomimimo.com/v1"
+    assert config.proxy == "http://proxy.test:8080"
+
+
+def test_wandb_inference_descriptor_uses_openai_chat_transport() -> None:
+    from providers.defaults import WANDB_INFERENCE_DEFAULT_BASE
+
+    descriptor = PROVIDER_CATALOG["wandb_inference"]
+
+    assert descriptor.transport_type == "openai_chat"
+    assert descriptor.default_base_url == WANDB_INFERENCE_DEFAULT_BASE
+    assert descriptor.credential_env == "WANDB_API_KEY"
+    assert descriptor.base_url_attr is None
+    assert "thinking" in descriptor.capabilities
+
+
+def test_build_provider_config_wandb_inference_uses_api_key_and_proxy() -> None:
+    descriptor = PROVIDER_CATALOG["wandb_inference"]
+    settings = _make_settings(
+        wandb_api_key="wandb-token",
+        wandb_inference_proxy="http://proxy.test:8080",
+    )
+
+    config = build_provider_config(descriptor, settings)
+
+    assert config.api_key == "wandb-token"
+    assert config.proxy == "http://proxy.test:8080"
+
+
 def test_create_provider_uses_openai_chat_openrouter_by_default():
     with patch("providers.transports.openai_chat.transport.AsyncOpenAI"):
         provider = create_provider("open_router", _make_settings())
@@ -328,6 +389,8 @@ def test_create_provider_instantiates_each_builtin():
         cohere_api_key="test_cohere_key",
         github_models_token="test_github_models_token",
         kimi_api_key="test_kimi_key",
+        xiaomimimo_api_key="test_xiaomimimo_key",
+        wandb_api_key="test_wandb_key",
     )
     cases = {
         "nvidia_nim": NvidiaNimProvider,
@@ -352,6 +415,8 @@ def test_create_provider_instantiates_each_builtin():
         "gemini": GeminiProvider,
         "groq": GroqProvider,
         "cerebras": CerebrasProvider,
+        "xiaomimimo": XiaomiMiMoProvider,
+        "wandb_inference": WandbInferenceProvider,
     }
 
     with (

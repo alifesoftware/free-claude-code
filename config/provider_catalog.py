@@ -40,6 +40,10 @@ GEMINI_DEFAULT_BASE = "https://generativelanguage.googleapis.com/v1beta/openai/"
 GROQ_DEFAULT_BASE = "https://api.groq.com/openai/v1"
 CEREBRAS_DEFAULT_BASE = "https://api.cerebras.ai/v1"
 SAMBANOVA_DEFAULT_BASE = "https://api.sambanova.ai/v1"
+# Xiaomi MiMo OpenAI-compatible Chat Completions API.
+XIAOMIMIMO_DEFAULT_BASE = "https://api.xiaomimimo.com/v1"
+# W&B Inference OpenAI-compatible Chat Completions API.
+WANDB_INFERENCE_DEFAULT_BASE = "https://api.inference.wandb.ai/v1"
 
 
 @dataclass(frozen=True, slots=True)
@@ -353,6 +357,29 @@ PROVIDER_CATALOG: dict[str, ProviderDescriptor] = {
             "native_anthropic",
             "local",
         ),
+    ),
+    "xiaomimimo": ProviderDescriptor(
+        provider_id="xiaomimimo",
+        display_name="Xiaomi MiMo",
+        transport_type="openai_chat",
+        credential_env="XIAOMIMIMO_API_KEY",
+        credential_url="https://platform.xiaomimimo.com",
+        credential_attr="xiaomimimo_api_key",
+        default_base_url=XIAOMIMIMO_DEFAULT_BASE,
+        base_url_attr="xiaomimimo_base_url",
+        proxy_attr="xiaomimimo_proxy",
+        capabilities=("chat", "streaming", "tools", "thinking"),
+    ),
+    "wandb_inference": ProviderDescriptor(
+        provider_id="wandb_inference",
+        display_name="W&B Inference",
+        transport_type="openai_chat",
+        credential_env="WANDB_API_KEY",
+        credential_url="https://wandb.ai/authorize",
+        credential_attr="wandb_api_key",
+        default_base_url=WANDB_INFERENCE_DEFAULT_BASE,
+        proxy_attr="wandb_inference_proxy",
+        capabilities=("chat", "streaming", "tools", "thinking"),
     ),
 }
 

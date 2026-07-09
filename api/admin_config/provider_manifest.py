@@ -109,6 +109,22 @@ _PROVIDER_FIELD_OVERRIDES: dict[str, dict[str, Any]] = {
             "[OpenAI compatibility](https://inference-docs.cerebras.ai/resources/openai)."
         ),
     },
+    "XIAOMIMIMO_API_KEY": {
+        "label": "Xiaomi MiMo API Key",
+        "description": (
+            "Xiaomi MiMo API key (create at "
+            "[platform.xiaomimimo.com](https://platform.xiaomimimo.com)). "
+            "Set XIAOMIMIMO_BASE_URL to the Token Plan endpoint for lower-cost access."
+        ),
+    },
+    "WANDB_API_KEY": {
+        "label": "W&B Inference API Key",
+        "description": (
+            "Weights & Biases Inference API key (create at "
+            "[wandb.ai/settings](https://wandb.ai/settings)). "
+            "Provides access to DeepSeek, Qwen, and other open-source models via CoreWeave."
+        ),
+    },
 }
 
 
