@@ -57,7 +57,7 @@ Free Claude Code routes Anthropic Messages API traffic from Claude Code (CLI and
 - Drop-in proxy for Claude Code's Anthropic API calls (`/v1/messages`, `/v1/models`).
 - Drop-in proxy for Codex via the OpenAI Responses API (`/v1/responses`).
 - `fcc-claude` and `fcc-codex` launchers that read the current Admin UI port and auth token each time they start.
-- 24 provider backends: NVIDIA NIM, OpenRouter, Google AI Studio (Gemini), DeepSeek, Mistral La Plateforme, Mistral Codestral, OpenCode Zen, OpenCode Go, Vercel AI Gateway, Hugging Face Inference Providers, Cohere, GitHub Models, Wafer, Kimi, MiniMax, Cerebras Inference, Groq, SambaNova, Fireworks AI, Cloudflare, Z.ai, LM Studio, llama.cpp, and Ollama.
+- 26 provider backends: NVIDIA NIM, OpenRouter, Google AI Studio (Gemini), DeepSeek, Mistral La Plateforme, Mistral Codestral, OpenCode Zen, OpenCode Go, Vercel AI Gateway, Hugging Face Inference Providers, Cohere, GitHub Models, Wafer, Kimi, MiniMax, Cerebras Inference, Groq, SambaNova, Fireworks AI, Cloudflare, Z.ai, LM Studio, llama.cpp, Ollama, Xiaomi MiMo, and W&B Inference.
 - Per-model routing for Claude Code: send Opus, Sonnet, Haiku, and fallback traffic to different providers.
 - Native Claude Code `/model` picker support through the proxy's `/v1/models` endpoint (see [Model Picker](#model-picker)).
 - Native Codex `/model` picker support when launched through `fcc-codex`, using a generated local model catalog.
@@ -416,7 +416,31 @@ In the Admin UI, keep or update `OLLAMA_BASE_URL`, then set `MODEL` to the same 
 
 `OLLAMA_BASE_URL` is the Ollama server root; do not append `/v1`. Example model slugs include `ollama/llama3.1` and `ollama/llama3.1:8b`.
 
-### 25. Mix Providers By Model Tier
+### 25. [Xiaomi MiMo](https://platform.xiaomimimo.com/)
+
+Get an API key from the [MiMo platform console](https://platform.xiaomimimo.com/console/api-keys).
+
+In the Admin UI, paste it into `XIAOMIMIMO_API_KEY`. The default endpoint is the Pay-As-You-Go API at `api.xiaomimimo.com/anthropic/v1`.
+
+To use the **Token Plan** instead, also set `XIAOMIMIMO_BASE_URL` to `https://token-plan-cn.xiaomimimo.com/anthropic/v1`.
+
+Example model slugs: `xiaomimimo/MiMo-7B-RL`, `xiaomimimo/MiMo-72B-RL`.
+
+### 26. [W&B Inference](https://docs.wandb.ai/guides/inference)
+
+Get your W&B API key at [wandb.ai/settings](https://wandb.ai/settings) (the same key used for W&B Weave tracing).
+
+In the Admin UI, paste it into `WANDB_API_KEY`. W&B Inference hosts open-source models via CoreWeave at `api.inference.wandb.ai/v1`.
+
+Popular examples:
+
+- `wandb_inference/deepseek-ai/DeepSeek-V3.1`
+- `wandb_inference/Qwen/Qwen3-Coder-480B-A35B-Instruct`
+- `wandb_inference/meta-llama/Llama-4-Scout-17B-16E-Instruct`
+
+Browse available models at [W&B Inference docs](https://docs.wandb.ai/guides/inference).
+
+### 27. Mix Providers By Model Tier
 
 Each model tier can use a different provider by setting `MODEL_OPUS`, `MODEL_SONNET`, and `MODEL_HAIKU` in the Admin UI. Leave a tier blank to inherit `MODEL`. These tier overrides apply to Claude model names that contain `opus`, `sonnet`, or `haiku`. Codex uses the Admin `MODEL` default through `fcc-codex` unless a session requests a provider-prefixed slug directly.
 

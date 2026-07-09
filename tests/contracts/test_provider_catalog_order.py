@@ -27,6 +27,8 @@ _EXPECTED_PROVIDER_ORDER: tuple[str, ...] = (
     "lmstudio",
     "llamacpp",
     "ollama",
+    "xiaomimimo",
+    "wandb_inference",
 )
 
 

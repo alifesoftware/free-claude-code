@@ -361,6 +361,16 @@ account-scoped Workers AI OpenAI-compatible Chat Completions endpoint for
 Cloudflare-specific reasoning deltas stay in the Cloudflare provider client.
 MiniMax uses its Anthropic-compatible Messages endpoint; its provider client owns
 the MiniMax-specific `adaptive` thinking request shape.
+Xiaomi MiMo uses the Anthropic-compatible Messages endpoint at
+`api.xiaomimimo.com/anthropic/v1`; its provider client overrides the model-list
+request to hit `/v1/models` (the standard OpenAI path) because MiMo exposes the
+model catalogue there rather than at the Anthropic-prefixed path. Token Plan
+subscribers set `XIAOMIMIMO_BASE_URL` to the token-plan endpoint; the base-URL
+override is wired through `base_url_attr` in the provider descriptor.
+W&B Inference uses the OpenAI Chat Completions endpoint at
+`api.inference.wandb.ai/v1`; it hosts open-source models (DeepSeek, Qwen3,
+Llama 4, and others) via CoreWeave. The provider stays thin because its
+documented OpenAI-compatible behaviour matches shared transport policy.
 Mistral La Plateforme keeps its native `reasoning_effort` and thinking-chunk
 request/stream mapping inside
 [providers/mistral/reasoning.py](providers/mistral/reasoning.py), including its

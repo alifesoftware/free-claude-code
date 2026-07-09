@@ -63,6 +63,11 @@ def _make_mock_settings(**overrides):
     mock.groq_proxy = ""
     mock.cerebras_api_key = ""
     mock.cerebras_proxy = ""
+    mock.xiaomimimo_api_key = ""
+    mock.xiaomimimo_base_url = ""
+    mock.xiaomimimo_proxy = ""
+    mock.wandb_api_key = ""
+    mock.wandb_inference_proxy = ""
     mock.provider_rate_limit = 40
     mock.provider_rate_window = 60
     mock.provider_max_concurrency = 5

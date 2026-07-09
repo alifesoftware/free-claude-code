@@ -161,6 +161,20 @@ def _create_cerebras(config: ProviderConfig, _settings: Settings) -> BaseProvide
     return CerebrasProvider(config)
 
 
+def _create_xiaomimimo(config: ProviderConfig, _settings: Settings) -> BaseProvider:
+    from providers.xiaomimimo import XiaomiMiMoProvider
+
+    return XiaomiMiMoProvider(config)
+
+
+def _create_wandb_inference(
+    config: ProviderConfig, _settings: Settings
+) -> BaseProvider:
+    from providers.wandb_inference import WandbInferenceProvider
+
+    return WandbInferenceProvider(config)
+
+
 PROVIDER_FACTORIES: dict[str, ProviderFactory] = {
     "nvidia_nim": _create_nvidia_nim,
     "open_router": _create_open_router,
@@ -186,6 +200,8 @@ PROVIDER_FACTORIES: dict[str, ProviderFactory] = {
     "lmstudio": _create_lmstudio,
     "llamacpp": _create_llamacpp,
     "ollama": _create_ollama,
+    "xiaomimimo": _create_xiaomimimo,
+    "wandb_inference": _create_wandb_inference,
 }
 
 if set(PROVIDER_CATALOG) != set(SUPPORTED_PROVIDER_IDS) or set(

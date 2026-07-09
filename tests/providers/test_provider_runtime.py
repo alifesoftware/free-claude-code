@@ -10,6 +10,8 @@ from config.provider_catalog import (
     GITHUB_MODELS_DEFAULT_BASE,
     MINIMAX_DEFAULT_BASE,
     PROVIDER_CATALOG,
+    WANDB_INFERENCE_DEFAULT_BASE,
+    XIAOMIMIMO_DEFAULT_BASE,
     ZAI_DEFAULT_BASE,
 )
 from config.provider_ids import SUPPORTED_PROVIDER_IDS
@@ -36,6 +38,8 @@ from providers.opencode import OpenCodeProvider
 from providers.runtime import ProviderRuntime, build_provider_config, create_provider
 from providers.vercel import VERCEL_AI_GATEWAY_DEFAULT_BASE, VercelProvider
 from providers.wafer import WaferProvider
+from providers.wandb_inference import WandbInferenceProvider
+from providers.xiaomimimo import XiaomiMiMoProvider
 from providers.zai import ZaiProvider
 
 
@@ -89,6 +93,11 @@ def _make_settings(**overrides):
     mock.groq_proxy = ""
     mock.cerebras_api_key = ""
     mock.cerebras_proxy = ""
+    mock.xiaomimimo_api_key = "test_xiaomimimo_key"
+    mock.xiaomimimo_base_url = ""
+    mock.xiaomimimo_proxy = ""
+    mock.wandb_api_key = "test_wandb_key"
+    mock.wandb_inference_proxy = ""
     mock.provider_rate_limit = 40
     mock.provider_rate_window = 60
     mock.provider_max_concurrency = 5
@@ -161,6 +170,45 @@ def test_minimax_descriptor_uses_native_anthropic_transport():
     assert descriptor.default_base_url == MINIMAX_DEFAULT_BASE
     assert descriptor.credential_env == "MINIMAX_API_KEY"
     assert "native_anthropic" in descriptor.capabilities
+
+
+def test_xiaomimimo_descriptor_uses_native_anthropic_transport():
+    descriptor = PROVIDER_CATALOG["xiaomimimo"]
+
+    assert descriptor.transport_type == "anthropic_messages"
+    assert descriptor.default_base_url == XIAOMIMIMO_DEFAULT_BASE
+    assert descriptor.credential_env == "XIAOMIMIMO_API_KEY"
+    assert "native_anthropic" in descriptor.capabilities
+    assert "thinking" in descriptor.capabilities
+
+
+def test_xiaomimimo_descriptor_supports_base_url_override():
+    descriptor = PROVIDER_CATALOG["xiaomimimo"]
+
+    assert descriptor.base_url_attr == "xiaomimimo_base_url"
+
+
+def test_wandb_inference_descriptor_uses_openai_chat_transport():
+    descriptor = PROVIDER_CATALOG["wandb_inference"]
+
+    assert descriptor.transport_type == "openai_chat"
+    assert descriptor.default_base_url == WANDB_INFERENCE_DEFAULT_BASE
+    assert descriptor.credential_env == "WANDB_API_KEY"
+    assert "thinking" in descriptor.capabilities
+    assert "native_anthropic" not in descriptor.capabilities
+
+
+def test_build_provider_config_wandb_inference_uses_api_key_and_proxy():
+    descriptor = PROVIDER_CATALOG["wandb_inference"]
+    settings = _make_settings(
+        wandb_api_key="wandb-token",
+        wandb_inference_proxy="http://proxy.test:8080",
+    )
+
+    config = build_provider_config(descriptor, settings)
+
+    assert config.api_key == "wandb-token"
+    assert config.proxy == "http://proxy.test:8080"
 
 
 def test_cloudflare_descriptor_uses_api_root_not_account_url():
@@ -350,8 +398,9 @@ def test_create_provider_instantiates_each_builtin():
         "gemini": GeminiProvider,
         "groq": GroqProvider,
         "cerebras": CerebrasProvider,
+        "xiaomimimo": XiaomiMiMoProvider,
+        "wandb_inference": WandbInferenceProvider,
     }
-
     with (
         patch("providers.transports.openai_chat.transport.AsyncOpenAI"),
         patch("httpx.AsyncClient"),

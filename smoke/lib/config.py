@@ -63,6 +63,8 @@ PROVIDER_SMOKE_DEFAULT_MODELS: dict[str, str] = {
     "sambanova": "sambanova/Meta-Llama-3.3-70B-Instruct",
     "cerebras": "cerebras/llama3.1-8b",
     "cloudflare": "cloudflare/@cf/moonshotai/kimi-k2.6",
+    "xiaomimimo": "xiaomimimo/MiMo-72B-RL",
+    "wandb_inference": "wandb_inference/deepseek-ai/DeepSeek-V3.1",
 }
 MISTRAL_REASONING_SMOKE_DEFAULT_MODEL = "mistral/mistral-medium-3-5"
 
@@ -291,6 +293,10 @@ class SmokeConfig:
             return bool(self.settings.sambanova_api_key.strip())
         if provider == "cerebras":
             return bool(self.settings.cerebras_api_key.strip())
+        if provider == "xiaomimimo":
+            return bool(self.settings.xiaomimimo_api_key.strip())
+        if provider == "wandb_inference":
+            return bool(self.settings.wandb_api_key.strip())
         if provider == "cloudflare":
             return bool(
                 self.settings.cloudflare_api_token.strip()
